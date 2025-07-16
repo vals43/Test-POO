@@ -6,27 +6,27 @@ public class Game {
     private static SpaceShip spaceShip;
 
     public void move() {
+        Scanner move = new Scanner(System.in);
         int i = 0;
         while (i < 20) {
-            Scanner move = new Scanner(System.in);
             System.out.println("Enter move (U/D/L/R): ");
             String yourMove = move.nextLine();
 
             switch (yourMove) {
                 case "U":
-                    spaceShip.setY(1);
+                    spaceShip.setY(spaceShip.getY() + 1);
                     i++;
                     break;
                 case "D":
-                    spaceShip.setY(-1);
+                    spaceShip.setY(spaceShip.getY() - 1);
                     i++;
                     break;
                 case "L":
-                    spaceShip.setX(-1);
+                    spaceShip.setX(spaceShip.getX() - 1);
                     i++;
                     break;
                 case "R":
-                    spaceShip.setX(1);
+                    spaceShip.setX(spaceShip.getX() + 1);
                     i++;
                     break;
                 default:
@@ -36,7 +36,9 @@ public class Game {
     }
 
     public static void main(String[] args) {
-
+        spaceShip = new SpaceShip();
+        Game game = new Game();
+        game.move();
     }
 
 }
