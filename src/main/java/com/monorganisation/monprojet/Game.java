@@ -38,7 +38,7 @@ public class Game {
         System.out.println("Moves left: " + (MAX_MOVES - movesUsed));
     }
 
-    private String getUserInput() {
+    public String getUserInput() {
         String input;
         while (true) {
             System.out.print("Move (U/D/L/R): ");
