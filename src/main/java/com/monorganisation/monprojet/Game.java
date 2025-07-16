@@ -3,76 +3,65 @@ package com.monorganisation.monprojet;
 import java.util.Scanner;
 
 public class Game {
-    private static final int MAX_MOVES = 20;
-    private int movesUsed = 0;
-    int score;
+    private static SpaceShip spaceShip;
+    private static Grid grid;
 
-    private final Grid grid;
-    private final SpaceShip ship;
-    private final Scanner scanner;
+    public void move() {
+        Scanner scanner = new Scanner(System.in);
+        int moves = 0;
+        int gridSize = 6;
 
-    public Game(int size, int junk) {
-        grid = new Grid(size, junk);
-        ship = new SpaceShip();
-        this.score= 0;
-        scanner = new Scanner(System.in);
-    }
+        while (moves < 20) {
+            grid.updateGrid(spaceShip);
+            grid.displayGrid(moves);
 
-    public void playGame() {
-        while (movesUsed < MAX_MOVES) {
-            displayGameState();
-            String direction = getUserInput();
-            processMove(direction);
-            movesUsed++;
-        }
+            if (grid.allStonesCollected()) {
+                System.out.println("Congratulations! You collected all stones in " + moves + " moves!");
+                return;
+            }
 
-        System.out.println("Game Over");
-        System.out.println("Score: " + score);
-        scanner.close();
-    }
+            System.out.print("Enter move (U/D/L/R): ");
+            String yourMove = scanner.nextLine().toUpperCase();
+            boolean moved = false;
 
-    private void displayGameState() {
-        grid.updateSpaceShipPosition(ship);
-        System.out.println(grid);
-        System.out.println("Your score: " + score);
-        System.out.println("Moves left: " + (MAX_MOVES - movesUsed));
-    }
+            switch (yourMove) {
+                case "U":
+                    moved = spaceShip.moveY(-1, gridSize);
+                    break;
+                case "D":
+                    moved = spaceShip.moveY(1, gridSize);
+                    break;
+                case "L":
+                    moved = spaceShip.moveX(-1, gridSize);
+                    break;
+                case "R":
+                    moved = spaceShip.moveX(1, gridSize);
+                    break;
+                default:
+                    System.out.println("Invalid move, please enter U, D, L, or R.");
+                    continue; // redemande sans consommer le move
+            }
 
-    public String getUserInput() {
-        String input;
-        while (true) {
-            System.out.print("Move (U/D/L/R): ");
-            input = scanner.nextLine().trim().toUpperCase();
-            if (input.matches("[UDLR]")) {
-                return input;
+            if (moved) {
+                moves++;
+            } else {
+                System.out.println("Movement impossible! You hit the border of the grid. Try another direction.");
             }
         }
-    }
 
-    private void processMove(String direction) {
-        int newX = ship.getX();
-        int newY = ship.getY();
-
-        if (direction.equals("U")) newX--;
-        if (direction.equals("D")) newX++;
-        if (direction.equals("L")) newY--;
-        if (direction.equals("R")) newY++;
-
-        if (grid.isInsideGrid(newX, newY)) {
-            ship.setX(newX - ship.getX());
-            ship.setY(newY - ship.getY());
-
-            if (grid.isJunkAt(newX, newY)) {
-                grid.removeJunk(newX, newY);
-                score++;
-            }
+        grid.updateGrid(spaceShip);
+        grid.displayGrid(moves);
+        if (grid.allStonesCollected()) {
+            System.out.println("Congratulations! You collected all stones in " + moves + " moves!");
         } else {
-            System.out.println("Invalid move");
+            System.out.println("Game Over! You did not collect all stones in 20 moves.");
         }
     }
 
     public static void main(String[] args) {
-        Game game = new Game(5, 5);
-        game.playGame();
+        spaceShip = new SpaceShip();
+        grid = new Grid(6);
+        Game game = new Game();
+        game.move();
     }
 }
